@@ -19,6 +19,9 @@ class MyHomepage extends StatefulWidget {
 }
 
 class _MyHomepageState extends State<MyHomepage> {
+  var titleController = TextEditingController();
+  var amountController = TextEditingController();
+
   List<Transaction> transactions = [
     Transaction(
         id: DateTime.now().toString(),
@@ -36,6 +39,22 @@ class _MyHomepageState extends State<MyHomepage> {
         date: DateTime.now(),
         amount: 83.2),
   ];
+
+  void addNewTransaction() {
+    var title = titleController.text;
+    titleController.text = '';
+    var amount = amountController.text;
+    amountController.text = '';
+    var newTx = Transaction(
+        id: DateTime.now().toString(),
+        title: title,
+        date: DateTime.now(),
+        amount: double.parse(amount));
+    setState(() {
+      transactions.add(newTx);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,19 +66,42 @@ class _MyHomepageState extends State<MyHomepage> {
           Card(
             child: Text('charts'),
           ),
-
-          
+          Card(
+            child: Column(
+              children: [
+                TextField(
+                  decoration: InputDecoration(labelText: 'title'),
+                  controller: titleController,
+                  onSubmitted: (_) {
+                    addNewTransaction();
+                  },
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: 'amount'),
+                  controller: amountController,
+                  onSubmitted: (_) {
+                    addNewTransaction();
+                  },
+                ),
+                TextButton(
+                    onPressed: () {
+                      addNewTransaction();
+                    },
+                    child: Text('add Transactiion'))
+              ],
+            ),
+          ),
           Column(
             children: transactions.map((tx) {
               return Card(
-                child: Row(children: [
-                  Text(tx.amount.toString()),
-                  Column(children: [
-                    Text(tx.title),
-                    Text(tx.date.toString())
-
-                  ],)
-                ],),
+                child: Row(
+                  children: [
+                    Text(tx.amount.toString()),
+                    Column(
+                      children: [Text(tx.title), Text(tx.date.toString())],
+                    )
+                  ],
+                ),
               );
             }).toList(),
           ),
