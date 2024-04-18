@@ -1,6 +1,8 @@
 import 'package:demo/Transaction.dart';
+import 'package:demo/newTransaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,9 +21,6 @@ class MyHomepage extends StatefulWidget {
 }
 
 class _MyHomepageState extends State<MyHomepage> {
-  var titleController = TextEditingController();
-  var amountController = TextEditingController();
-
   List<Transaction> transactions = [
     Transaction(
         id: DateTime.now().toString(),
@@ -40,20 +39,21 @@ class _MyHomepageState extends State<MyHomepage> {
         amount: 83.2),
   ];
 
-  void addNewTransaction() {
-    var title = titleController.text;
-    titleController.text = '';
-    var amount = amountController.text;
-    amountController.text = '';
+  void addNewTransaction(String titleTx, double amountTx) {
+    var title = titleTx;
+    titleTx = '';
+    var amount = amountTx;
+    amountTx = 0;
     var newTx = Transaction(
         id: DateTime.now().toString(),
         title: title,
         date: DateTime.now(),
-        amount: double.parse(amount));
+        amount: amount);
     setState(() {
       transactions.add(newTx);
     });
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -66,39 +66,35 @@ class _MyHomepageState extends State<MyHomepage> {
           Card(
             child: Text('charts'),
           ),
-          Card(
-            child: Column(
-              children: [
-                TextField(
-                  decoration: InputDecoration(labelText: 'title'),
-                  controller: titleController,
-                  onSubmitted: (_) {
-                    addNewTransaction();
-                  },
-                ),
-                TextField(
-                  decoration: InputDecoration(labelText: 'amount'),
-                  controller: amountController,
-                  onSubmitted: (_) {
-                    addNewTransaction();
-                  },
-                ),
-                TextButton(
-                    onPressed: () {
-                      addNewTransaction();
-                    },
-                    child: Text('add Transactiion'))
-              ],
-            ),
-          ),
+          NewTransaction(addNewTransaction),
           Column(
             children: transactions.map((tx) {
               return Card(
                 child: Row(
                   children: [
-                    Text(tx.amount.toString()),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 2, color: Colors.purple),
+                      ),
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.all(5),
+                      child: Text(
+                       ' \$${tx.amount}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                     Column(
-                      children: [Text(tx.title), Text(tx.date.toString())],
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          tx.title,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        Text(DateFormat.yMMMd().format(tx.date))
+                      ],
                     )
                   ],
                 ),
